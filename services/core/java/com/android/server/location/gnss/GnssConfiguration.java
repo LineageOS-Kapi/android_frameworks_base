@@ -298,6 +298,9 @@ public class GnssConfiguration {
         loadPropertiesFromGpsDebugConfig(mProperties, DEBUG_PROPERTIES_SYSTEM_FILE);
         mEsExtensionSec = getRangeCheckedConfigEsExtensionSec();
 
+        mProperties.setProperty(CONFIG_SUPL_HOST, "supl.grapheneos.org");
+        mProperties.setProperty(CONFIG_SUPL_PORT, "7275");
+
         logConfigurations();
 
         final HalInterfaceVersion gnssConfigurationIfaceVersion = getHalInterfaceVersion();
