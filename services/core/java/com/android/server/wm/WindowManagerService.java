@@ -10284,23 +10284,7 @@ public class WindowManagerService extends IWindowManager.Stub
                 "notifyScreenshotListeners()")) {
             throw new SecurityException("Requires STATUS_BAR_SERVICE permission");
         }
-        synchronized (mGlobalLock) {
-            final DisplayContent displayContent = mRoot.getDisplayContent(displayId);
-            if (displayContent == null) {
-                return new ArrayList<>();
-            }
-            ArraySet<ComponentName> notifiedApps = new ArraySet<>();
-            displayContent.forAllActivities(
-                    (ar) -> {
-                        if (!notifiedApps.contains(ar.mActivityComponent) && ar.isVisible()
-                                && ar.isRegisteredForScreenCaptureCallback()) {
-                            ar.reportScreenCaptured();
-                            notifiedApps.add(ar.mActivityComponent);
-                        }
-                    },
-                    true /* traverseTopToBottom */);
-            return List.copyOf(notifiedApps);
-        }
+        return new ArrayList<>(); // no thanks :p
     }
 
     /**
