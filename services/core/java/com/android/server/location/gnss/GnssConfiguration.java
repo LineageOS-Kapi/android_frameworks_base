@@ -32,6 +32,8 @@ import libcore.io.IoUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -295,6 +297,35 @@ public class GnssConfiguration {
         loadPropertiesFromGpsDebugConfig(mProperties, DEBUG_PROPERTIES_VENDOR_FILE);
         loadPropertiesFromGpsDebugConfig(mProperties, DEBUG_PROPERTIES_SYSTEM_FILE);
         mEsExtensionSec = getRangeCheckedConfigEsExtensionSec();
+
+        mProperties.setProperty(CONFIG_SUPL_HOST, "supl.grapheneos.org");
+        mProperties.setProperty(CONFIG_SUPL_PORT, "7275");
+        // Override PSDS by replacing the host to broadcom.psds.grapheneos.org, only works for
+        // The Pixel 6 onwards as well as other devices that have a Broadcom GNSS chip.
+        String[] psdsServers = {CONFIG_LONGTERM_PSDS_SERVER_1, CONFIG_LONGTERM_PSDS_SERVER_2, CONFIG_LONGTERM_PSDS_SERVER_3, CONFIG_NORMAL_PSDS_SERVER, CONFIG_REALTIME_PSDS_SERVER};
+        String host = TextUtils.isEmpty(mContext.getString(com.android.internal.R.string.config_gnssPsdsUrl)) ? "broadcom.psds.grapheneos.org" : mContext.getString(com.android.internal.R.string.config_gnssPsdsUrl);
+        for (String psdsServer : psdsServers) {
+            final String origValue = mProperties.getProperty(psdsServer);
+            if (TextUtils.isEmpty(origValue)) {
+                continue;
+            }
+            final URL origUrl;
+            try {
+                origUrl = new URL(origValue);
+            } catch (MalformedURLException e) {
+                mProperties.remove(psdsServer);
+                Log.e(TAG, "Invalid URL: " + origValue + " for " + psdsServer);
+                continue;
+            }
+            final URL newUrl;
+            try {
+                newUrl = new URL("https", host, origUrl.getFile());
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException(e);
+            }
+            mProperties.setProperty(psdsServer, newUrl.toString());
+            Log.d(TAG, "Overriding " + psdsServer + " from " + origValue + " to " + newUrl);
+        }
 
         logConfigurations();
 
