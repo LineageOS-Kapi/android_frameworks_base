@@ -7473,4 +7473,6 @@
     <!-- Biometrics fingerprint frr notification target activity component name, it shall be customized by OEMs -->
     <string translatable="false" name="config_fingerprintFrrTargetComponent"></string>
 
+    <string name="config_gnssPsdsUrl"></string>
+    <java-symbol type="string" name="config_gnssPsdsUrl" />
 </resources>

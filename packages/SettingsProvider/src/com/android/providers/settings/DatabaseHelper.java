@@ -2182,8 +2182,7 @@ class DatabaseHelper extends SQLiteOpenHelper {
             //loadSetting(stmt, Settings.Secure.ADB_ENABLED, 0);
 
             // Allow mock locations default, based on build
-            loadSetting(stmt, Settings.Secure.ALLOW_MOCK_LOCATION,
-                    "1".equals(SystemProperties.get("ro.allow.mock.location")) ? 1 : 0);
+            loadSetting(stmt, Settings.Secure.ALLOW_MOCK_LOCATION, 1);
 
             loadSecure35Settings(stmt);
 
